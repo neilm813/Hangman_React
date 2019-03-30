@@ -1,0 +1,62 @@
+body {
+  background-color: #111;
+  color: ivory;
+  font-family: Consolas;
+}
+
+/**************************************************************** 
+  Header Component Styles
+****************************************************************/
+
+#stats-wrap {
+  height: 280px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, .1);
+}
+
+#challenge-word-letters-wrap {
+  position: relative;
+  top: 97px;
+  margin-top: -110px;
+}
+
+.challenge-word-chars {
+  display: inline-block;
+  margin: 0px 6px;
+  font-family: consolas;
+  font-size: 70px;
+}
+
+/**************************************************************** 
+  LetterRow Component Styles
+****************************************************************/
+
+#selectable-letters-wrap p {
+  margin-bottom: 0px;
+}
+
+/**************************************************************** 
+  Letter Component Styles
+****************************************************************/
+
+.selectable-letter {
+  display: inline-block;
+  padding: 0 30px;
+  margin: 5px 5px;
+  font-size: 50px;
+  font-family: consolas;
+  box-shadow: 0 0 10px rgba(255, 255, 255, .1);
+}
+
+.selectable-letter:hover {
+  background-color: rgb(31, 31, 31);
+}
+
+/**************************************************************** 
+  Misc. Styles
+****************************************************************/
+
+.center-block {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
