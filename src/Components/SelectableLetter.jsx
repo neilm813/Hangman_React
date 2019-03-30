@@ -1,21 +1,19 @@
 import React, { Component } from 'react'
-import { toggleKey, concatKey, spliceKey, incrementKeyByProp } from '../helpers';
+import { concatKey, setKeyTo, } from '../helpers';
 
 export default class SelectableLetter extends Component {
   constructor(props) {
     super(props);
     this.state = {
       classList: ['selectable-letter'],
-      clicked: false, 
+      clicked: false,
     }
   }
-  letterClick = (e) => {
-
-    this.setState(incrementKeyByProp('nested-obj.count', 'step'), _=> console.log(this.state));
+  letterClick = _=> {
 
     if (this.state.clicked) return;
     
-    this.setState(toggleKey('clicked'));
+    this.setState(setKeyTo('clicked', true));
 
     const isCorrect = this.props.isChoiceCorrect(this.props.content.toLowerCase());
 
