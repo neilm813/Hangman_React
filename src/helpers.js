@@ -8,6 +8,14 @@ const makeUpdaterWithProps = apply => (...rest) => (state, props) => {
   return apply(state, props, ...rest); // apply needs to return the new state obj
 }
 
+export const splitKeyPath = (path) => Array.isArray(path) ? path : typeof (path) === 'string' ? path.split(/[\\\[\\\].]/).filter(Boolean) : [];
+
+export const setKeyTo = (keyPath, val, state) => {
+  const keys = splitKeyPath(keyPath);
+  if (keys.length === 1) return { [keys[0]]: val, };
+  else if (keys.length > 1) return copyObjPath(state, keys, val);
+}
+
 export const toggleKey = makeUpdater(
   (prevState, keyPath) => copyObjPath(prevState, keyPath, prev => !prev)
 );
@@ -36,7 +44,6 @@ export const spliceKey = makeUpdater((prevState, keyPath, startIdx, delCnt, inse
   return statePathCopy;
 });
 
-export const splitKeyPath = (path) => Array.isArray(path) ? path : typeof (path) === 'string' ? path.split(/[\\\[\\\].]/).filter(Boolean) : [];
 
 export function checkObjType(o, typeCheck) {
   const type = Object.prototype.toString.call(o);
