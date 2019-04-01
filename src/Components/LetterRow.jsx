@@ -17,29 +17,6 @@ export default class LetterRow extends Component {
     return Math.ceil(letters.length / this.state.maxLettersPerRow);
   }
 
-  buildRowsOld() {
-    const rows = [];
-    const lettersCopy = [...letters];
-
-    // build each row
-    for (let i = 0; i < this.rowCount(); i++) {
-
-      rows.push(
-        <div key={i} className="row">
-          <p className="center-block">
-            {
-              // on the last row that has fewer letters, splice returns the remaining letters only
-              lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
-                <SelectableLetter step={5} key={letter} content={letter} isChoiceCorrect={this.props.isChoiceCorrect} />
-              ))
-            }
-          </p>
-        </div>
-      )
-    }
-    return rows;
-  }
-
   buildRows() {
     const rows = [];
     const lettersCopy = [...letters];
@@ -50,7 +27,7 @@ export default class LetterRow extends Component {
           {
             // on the last row that has fewer letters, splice returns the remaining letters only
             lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
-              <SelectableLetter key={letter} content={letter} isChoiceCorrect={this.props.isChoiceCorrect} />
+              <SelectableLetter key={letter} content={letter} isChoiceCorrect={this.props.isChoiceCorrect} hasRoundEnded={this.props.hasRoundEnded} />
             ))
           }
         </p>

@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import Header from './Header'
 import LetterRow from './LetterRow';
-import { incrementKeyBy, toggleKey, setKeyTo, } from '../helpers';
-// https://www.npmjs.com/package/random-words
-const randomWords = require('random-words');
+import { incrementKeyBy, copyObjPath, } from '../helpers';
+const randomWords = require('random-words'); // https://www.npmjs.com/package/random-words
+
+class Scores {
+  constructor(sessionWinStreak = 0, roundCount = 0, correctCount  = 0, attemptCount = 0, maxAttempts = 8) {
+    this.sessionWinStreak = sessionWinStreak;
+    this.roundCount = roundCount;
+    this.correctCount = correctCount;
+    this.attemptCount = attemptCount;
+    this.maxAttempts = maxAttempts;
+  }
+}
 
 class App extends Component {
 
@@ -14,32 +23,55 @@ class App extends Component {
       minWordLen: 4,
       maxWordLen: 20,
       challengeWord: '',
-      showNewWordBtn: false,
-      scores: {
-        attemptCount: 0,
-        correctCount: 0,
-        maxAttempts: 8,
-        sessionWinStreak: 0,
-      }
+      scores: new Scores()
     }
   }
+
+  componentDidMount() {
+    this.setState({ challengeWord: this.getWord() });
+  }
+
+  isRoundWon = correctCnt => this.state.scores.correctCount === this.state.challengeWord.length || this.state.challengeWord.length === correctCnt;
+  hasRoundEnded = _ => this.isRoundWon() || /* round lost */ this.state.scores.attemptCount === this.state.scores.maxAttempts;
 
   getWord() {
     let word = '';
     while (word.length < this.state.minWordLen || word.length > this.state.maxWordLen)
       word = randomWords();
-    this.setState({ challengeWord: randomWords() });
+    return word;
   }
 
-  componentDidMount() {
-    this.getWord();
+  newRound = _ => {
+
+    const newState = {
+      challengeWord: this.getWord(),
+    };
+
+    if (this.isRoundWon()) {
+
+      this.setState(prevState => {
+        newState.scores = new Scores(prevState.scores.sessionWinStreak, prevState.scores.roundCount + 1);
+        return newState;
+      });
+    }
+    else {
+      newState.scores = new Scores(); 
+      this.setState(newState);
+    } 
   }
 
   processChoiceOutcome(matchedIdxs) {
 
-    if (matchedIdxs.length) 
-      this.setState(incrementKeyBy('scores.correctCount', 1));
-    else 
+    if (matchedIdxs.length) {
+
+      this.setState(prevState => {
+
+        const copy = copyObjPath(prevState, 'scores.correctCount', prev => prev + matchedIdxs.length);
+        this.isRoundWon(copy.scores.correctCount) && copy.scores.sessionWinStreak++;
+        return copy;
+      })
+    }
+    else
       this.setState(incrementKeyBy('scores.attemptCount', 1));
   }
 
@@ -58,17 +90,21 @@ class App extends Component {
   }
 
   render() {
+
+    let newWordBtn;
+    if (this.hasRoundEnded())
+      newWordBtn = <button onClick={this.newRound} type="button" className="btn btn-outline-light">New Word</button>
+
     return (
       <div className="container">
         <Header word={this.state.challengeWord} scores={this.state.scores} />
         <div className="container">
-          <LetterRow isChoiceCorrect={this.isChoiceCorrect} />
+          <LetterRow isChoiceCorrect={this.isChoiceCorrect} hasRoundEnded={this.hasRoundEnded} />
         </div>
-        
+        <div className="text-center mt-3">{newWordBtn}</div>
       </div>
     );
   }
 }
 
 export default App;
-
