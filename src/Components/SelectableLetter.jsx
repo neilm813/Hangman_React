@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { concatKey, toggleKey, copyObjPath, } from '../helpers';
+import { concatKey, toggleKey, } from '../helpers';
 
 export default class SelectableLetter extends Component {
   constructor(props) {

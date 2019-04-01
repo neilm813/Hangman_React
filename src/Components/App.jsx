@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import Header from './Header'
 import LetterRow from './LetterRow';
-import { incrementKeyBy, copyObjPath, } from '../helpers';
+import { incrementKeyBy, copyObjPath, concatKey, } from '../helpers';
 const randomWords = require('random-words'); // https://www.npmjs.com/package/random-words
 
 class Scores {
-  constructor(sessionWinStreak = 0, roundCount = 0, correctCount  = 0, attemptCount = 0, maxAttempts = 8) {
+  constructor(sessionWinStreak = 0, roundCount = 0, correctCount = 0, attemptCount = 0, maxAttempts = 8) {
     this.sessionWinStreak = sessionWinStreak;
     this.roundCount = roundCount;
     this.correctCount = correctCount;
@@ -23,7 +23,8 @@ class App extends Component {
       minWordLen: 4,
       maxWordLen: 20,
       challengeWord: '',
-      scores: new Scores()
+      scores: new Scores(),
+      letterIdxsToReveal: [],
     }
   }
 
@@ -32,7 +33,8 @@ class App extends Component {
   }
 
   isRoundWon = correctCnt => this.state.scores.correctCount === this.state.challengeWord.length || this.state.challengeWord.length === correctCnt;
-  hasRoundEnded = _ => this.isRoundWon() || /* round lost */ this.state.scores.attemptCount === this.state.scores.maxAttempts;
+  isRoundLost = _ => this.state.scores.attemptCount === this.state.scores.maxAttempts;
+  hasRoundEnded = _ => this.isRoundWon() || this.isRoundLost();
 
   getWord() {
     let word = '';
@@ -45,6 +47,7 @@ class App extends Component {
 
     const newState = {
       challengeWord: this.getWord(),
+      letterIdxsToReveal: [],
     };
 
     if (this.isRoundWon()) {
@@ -55,9 +58,9 @@ class App extends Component {
       });
     }
     else {
-      newState.scores = new Scores(); 
+      newState.scores = new Scores();
       this.setState(newState);
-    } 
+    }
   }
 
   processChoiceOutcome(matchedIdxs) {
@@ -80,6 +83,8 @@ class App extends Component {
 
     for (let i = 0; i < this.state.challengeWord.length; i++)
       if (this.state.challengeWord[i] === letter) matchedIdxs.push(i);
+
+    matchedIdxs.length && this.setState(concatKey('letterIdxsToReveal', matchedIdxs));
     return matchedIdxs;
   }
 
@@ -97,7 +102,13 @@ class App extends Component {
 
     return (
       <div className="container">
-        <Header word={this.state.challengeWord} scores={this.state.scores} />
+        <Header
+          word={this.state.challengeWord}
+          scores={this.state.scores}
+          letterIdxsToReveal={this.state.letterIdxsToReveal}
+          isRoundWon={this.isRoundWon}
+          isRoundLost={this.isRoundLost}
+        />
         <div className="container">
           <LetterRow isChoiceCorrect={this.isChoiceCorrect} hasRoundEnded={this.hasRoundEnded} />
         </div>

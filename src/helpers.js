@@ -1,20 +1,10 @@
-// Edited the last code snippet in https://medium.freecodecamp.org/get-pro-with-react-setstate-in-10-minutes-d38251d1c781
+// makeUpdater function idea edited from last code snippet here: https://medium.freecodecamp.org/get-pro-with-react-setstate-in-10-minutes-d38251d1c781
 
 const makeUpdater = apply => (...rest) => state => {
   return apply(state, ...rest); // apply needs to return the new state obj
 }
 
-const makeUpdaterWithProps = apply => (...rest) => (state, props) => {
-  return apply(state, props, ...rest); // apply needs to return the new state obj
-}
-
 export const splitKeyPath = (path) => Array.isArray(path) ? path : typeof (path) === 'string' ? path.split(/[\\\[\\\].]/).filter(Boolean) : [];
-
-export const setKeyTo = (keyPath, val, state) => {
-  const keys = splitKeyPath(keyPath);
-  if (keys.length === 1) return { [keys[0]]: val, };
-  else if (keys.length > 1) return copyObjPath(state, keys, val);
-}
 
 export const toggleKey = makeUpdater(
   (prevState, keyPath) => copyObjPath(prevState, keyPath, prev => !prev)
@@ -24,26 +14,9 @@ export const incrementKeyBy = makeUpdater(
   (prevState, keyPath, amnt) => copyObjPath(prevState, keyPath, prev => prev + amnt)
 );
 
-export const incrementKeyByProp = makeUpdaterWithProps(
-  (prevState, props, keyPath, prop) => copyObjPath(prevState, keyPath, prev => prev + props[prop])
-);
-
 export const concatKey = makeUpdater(
   (prevState, keyPath, add) => copyObjPath(prevState, keyPath, prevArr => prevArr.concat(add))
 );
-
-export const spliceKey = makeUpdater((prevState, keyPath, startIdx, delCnt, insertItems = [], ignoreNegativeOne = true) => {
-
-  const statePathCopy = copyObjPath(prevState, keyPath, prevArr => { // callback to return new value, prevArr ref broken via copyObjPath
-
-    let idx = checkObjType(startIdx, 'Function') ? startIdx(prevArr) : startIdx;
-
-    if (ignoreNegativeOne && idx === -1) return prevArr;
-    else prevArr.splice(idx, delCnt, ...insertItems); return prevArr
-  });
-  return statePathCopy;
-});
-
 
 export function checkObjType(o, typeCheck) {
   const type = Object.prototype.toString.call(o);
@@ -86,4 +59,3 @@ export function nElems (n, cb) {
     els.push(cb(i));
   return els;
 }
-
