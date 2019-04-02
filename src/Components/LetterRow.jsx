@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import SelectableLetter from './SelectableLetter';
 import { nElems, } from '../helpers';
+
+import SelectableLetter from './SelectableLetter';
 
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
@@ -17,7 +18,7 @@ export default class LetterRow extends Component {
     return Math.ceil(letters.length / this.state.maxLettersPerRow);
   }
 
-  buildRows() {
+  buildRows({ isChoiceCorrect, hasRoundEnded, }) {
     const rows = [];
     const lettersCopy = [...letters];
     rows.push(
@@ -27,7 +28,7 @@ export default class LetterRow extends Component {
           {
             // on the last row that has fewer letters, splice returns the remaining letters only
             lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
-              <SelectableLetter key={letter} content={letter} isChoiceCorrect={this.props.isChoiceCorrect} hasRoundEnded={this.props.hasRoundEnded} />
+              <SelectableLetter key={letter} content={letter} isChoiceCorrect={isChoiceCorrect} hasRoundEnded={hasRoundEnded} />
             ))
           }
         </p>
@@ -42,7 +43,7 @@ export default class LetterRow extends Component {
     return (
       <div className="container row-and-col-wrap">
         <div id="selectable-letters-wrap">
-          {this.buildRows()}
+          {this.buildRows(this.props)}
         </div>
       </div>
     )

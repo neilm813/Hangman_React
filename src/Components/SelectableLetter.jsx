@@ -13,11 +13,13 @@ export default class SelectableLetter extends Component {
 
   letterClick = _ => {
 
-    if (this.props.hasRoundEnded() || this.state.clicked) return;
+    const { hasRoundEnded, isChoiceCorrect, content, } = this.props;
+
+    if (hasRoundEnded() || this.state.clicked) return;
 
     this.setState(toggleKey('clicked'));
 
-    const isCorrect = this.props.isChoiceCorrect(this.props.content.toLowerCase());
+    const isCorrect = isChoiceCorrect(content.toLowerCase());
 
     if (isCorrect)
       this.setState(concatKey('classList', 'text-success'));
@@ -25,27 +27,21 @@ export default class SelectableLetter extends Component {
       this.setState(concatKey('classList', 'text-danger'));
   }
 
-  static getDerivedStateFromProps(nextProps, prevState){
-    if(nextProps.someValue!==prevState.someValue){
-      return { someState: nextProps.someValue};
-   }
-   else return null;
- }
+  static getDerivedStateFromProps(nextProps, prevState) {
 
- static getDerivedStateFromProps(nextProps, prevState) {
-
-  if (nextProps.hasRoundEnded() && prevState.clicked) {
-    return {
-      classList: ['selectable-letter'],
-      clicked: false,
-    };
+    if (nextProps.hasRoundEnded() && prevState.clicked) {
+      return {
+        classList: ['selectable-letter'],
+        clicked: false,
+      };
+    }
+    else return null;
   }
- else return null;
-}
-  
+
   render() {
+    const { letterClick, state: { classList, }, } = this;
     return (
-      <span className={this.state.classList.join(" ")} onClick={this.letterClick}>
+      <span className={classList.join(" ")} onClick={letterClick}>
         {this.props.content}
       </span>
     )
