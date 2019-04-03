@@ -99,7 +99,7 @@ class App extends Component {
 
   render() {
     const { hasRoundEnded, newRound, isRoundWon, isRoundLost, isChoiceCorrect,
-      state: { challengeWord, scores, letterIdxsToReveal, }, 
+      state: { challengeWord, scores, letterIdxsToReveal, },
     } = this;
 
     let newWordBtn;

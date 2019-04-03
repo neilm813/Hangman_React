@@ -1,9 +1,9 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Hangman",
+  "name": "Hangman",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "https://11points.com/wp-content/uploads/2012/09/dominatehangman-1600.jpg",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }

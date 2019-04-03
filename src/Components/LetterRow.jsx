@@ -24,15 +24,15 @@ export default class LetterRow extends Component {
     rows.push(
       nElems(this.rowCount(), i => (
         <div key={i} className="row">
-        <p className="center-block">
-          {
-            // on the last row that has fewer letters, splice returns the remaining letters only
-            lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
-              <SelectableLetter key={letter} content={letter} isChoiceCorrect={isChoiceCorrect} hasRoundEnded={hasRoundEnded} />
-            ))
-          }
-        </p>
-      </div>
+          <p className="center-block">
+            {
+              // on the last row that has fewer letters, splice returns the remaining letters only
+              lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
+                <SelectableLetter key={letter} content={letter} isChoiceCorrect={isChoiceCorrect} hasRoundEnded={hasRoundEnded} />
+              ))
+            }
+          </p>
+        </div>
       ))
     );
     return rows;
