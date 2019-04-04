@@ -41,7 +41,10 @@ export default class SelectableLetter extends Component {
   render() {
     const { letterClick, state: { classList, }, } = this;
     return (
-      <span className={classList.join(" ")} onClick={letterClick}>
+      <span 
+        className={classList.join(" ")} 
+        onClick={letterClick} 
+      >
         {this.props.content}
       </span>
     )
