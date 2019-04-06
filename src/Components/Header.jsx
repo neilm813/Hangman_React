@@ -5,20 +5,22 @@ class Header extends Component {
 
 
 	render() {
-		const { isRoundWon, isRoundLost, letterIdxsToReveal, word, scores } = this.props;
+		const { isRoundWon, isRoundLost, letterIdxsToReveal, word, 
+			scores: { attemptCount, maxAttempts, wins, losses, sessionWinStreak } } = this.props;
 		let letterClasses = "challenge-word-chars";
 
 		if (isRoundWon()) letterClasses += ' text-success';
 		else if (isRoundLost()) letterClasses += ' text-danger';
 
 		return (
-			<div id="stats-wrap" className="container text-center">
+			<div id="stats-wrap" className="container text-center mb-2">
 				<div className='rounded border border-top-0 border-secondary d-inline-block px-3'>
 					<h1><u>Hangman</u></h1>
 					<h2 id="remaining-attempts" className='my-3'>
-						Attempts: {scores.attemptCount} / {scores.maxAttempts}
+						Attempts: {attemptCount} / {maxAttempts}
 					</h2>
-					<h2>Session Win Streak: {scores.sessionWinStreak}</h2>
+					<h2>W: {wins} | L: {losses}</h2>
+					<h2>Win Streak: {sessionWinStreak}</h2>
 				</div>
 				<div id="challenge-word-wrap">
 					<div id="challenge-word-letters-wrap">

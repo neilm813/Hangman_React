@@ -7,9 +7,10 @@ import { incrementKeyBy, copyObjPath, concatKey, } from '../helpers';
 
 // TODO: add keypress support
 class Scores {
-  constructor(sessionWinStreak = 0, roundCount = 1, attemptCount = 0, maxAttempts = 8) {
+  constructor(sessionWinStreak = 0, wins = 0, losses = 0, attemptCount = 0, maxAttempts = 8) {
     this.sessionWinStreak = sessionWinStreak;
-    this.roundCount = roundCount;
+    this.wins = wins;
+    this.losses = losses;
     this.attemptCount = attemptCount;
     this.maxAttempts = maxAttempts;
   }
@@ -28,18 +29,26 @@ class App extends Component {
       letterIdxsToReveal: [],
       isRoundWon() { return this.challengeWord !== '' && this.letterIdxsToReveal.length === this.challengeWord.length; },
       isRoundLost() { return this.scores.attemptCount === this.scores.maxAttempts; },
-      hasRoundEnded() { return this.isRoundWon() || this.isRoundLost(); }
+      hasRoundEnded() { return this.isRoundWon() || this.isRoundLost(); },
     }
   }
 
-  componentDidMount() { this.setState({ challengeWord: this.getWord() }); }
-
   static getDerivedStateFromProps(props, prevState) {
 
-    return prevState.isRoundWon()
-      ? copyObjPath(prevState, 'scores.sessionWinStreak', prev => prev + 1)
-      : null;
+    let hasEnded = prevState.hasRoundEnded();
+    let isWon = prevState.isRoundWon();
+    if (hasEnded === false) return null;
+    const scores = { ...prevState.scores };
+
+    if (isWon) {
+      scores.wins += 1;
+      scores.sessionWinStreak += 1;
+    } else scores.losses += 1;
+
+    return { scores: scores, }
   }
+
+  componentDidMount() { this.setState({ challengeWord: this.getWord() }); }
 
   getWord() {
     let word = '';
@@ -74,19 +83,12 @@ class App extends Component {
   }
 
   newRound = _ => {
-
-    const newState = {
-      challengeWord: this.getWord(),
-      letterIdxsToReveal: [],
-    };
-
     this.setState(prevState => {
-      
-      if (this.state.isRoundWon())
-        newState.scores = new Scores(prevState.scores.sessionWinStreak, prevState.scores.roundCount + 1);
-      else
-        newState.scores = new Scores(0, prevState.scores.roundCount + 1);
-      return newState;
+      return { 
+        challengeWord: this.getWord(), 
+        letterIdxsToReveal: [],
+        scores: { ...prevState.scores, attemptCount: 0, }
+      }
     });
   }
 

@@ -9,8 +9,7 @@ body {
 ****************************************************************/
 
 #stats-wrap {
-  height: 280px;
-  box-shadow: 0 0 30px rgba(255, 255, 255, .1);
+  box-shadow: 0 0 5px rgba(255, 255, 255, .1);
 }
 
 #challenge-word-letters-wrap {
@@ -44,7 +43,7 @@ body {
   margin: 5px 5px;
   font-size: 50px;
   font-family: consolas;
-  box-shadow: 0 0 10px rgba(255, 255, 255, .1);
+  box-shadow: 0 0 5px rgba(255, 255, 255, .1);
 }
 
 .selectable-letter:hover {
