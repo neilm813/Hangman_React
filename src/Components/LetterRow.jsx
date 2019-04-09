@@ -18,7 +18,7 @@ export default class LetterRow extends Component {
     return Math.ceil(letters.length / this.state.maxLettersPerRow);
   }
 
-  buildRows({ isChoiceCorrect, hasRoundEnded, }) {
+  buildRows({ isChoiceCorrect, hasRoundEnded, letterKeyPressed }) {
     const rows = [];
     const lettersCopy = [...letters];
     rows.push(
@@ -28,7 +28,13 @@ export default class LetterRow extends Component {
             {
               // on the last row that has fewer letters, splice returns the remaining letters only
               lettersCopy.splice(0, this.state.maxLettersPerRow).map(letter => (
-                <SelectableLetter key={letter} content={letter} isChoiceCorrect={isChoiceCorrect} hasRoundEnded={hasRoundEnded} />
+                <SelectableLetter
+                  key={letter}
+                  letter={letter}
+                  isChoiceCorrect={isChoiceCorrect}
+                  hasRoundEnded={hasRoundEnded}
+                  letterKeyPressed={letter.toLowerCase() === letterKeyPressed ? letterKeyPressed : ''}
+                />
               ))
             }
           </p>

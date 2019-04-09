@@ -11,22 +11,6 @@ export default class SelectableLetter extends Component {
     }
   }
 
-  letterClick = _ => {
-
-    const { hasRoundEnded, isChoiceCorrect, content, } = this.props;
-
-    if (hasRoundEnded() || this.state.clicked) return;
-
-    this.setState(toggleKey('clicked'));
-
-    const isCorrect = isChoiceCorrect(content.toLowerCase());
-
-    if (isCorrect)
-      this.setState(concatKey('classList', 'text-success'));
-    else
-      this.setState(concatKey('classList', 'text-danger'));
-  }
-
   static getDerivedStateFromProps(nextProps, prevState) {
 
     if (nextProps.hasRoundEnded() && prevState.clicked) {
@@ -35,17 +19,41 @@ export default class SelectableLetter extends Component {
         clicked: false,
       };
     }
-    else return null;
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { letterKeyPressed } = this.props;
+    if (prevState.clicked) return;
+
+    if (letterKeyPressed !== prevProps.letterKeyPressed && letterKeyPressed)
+      this.letterClick(null, letterKeyPressed);
+  }
+
+  letterClick = (e, letterKeyPressed) => {
+
+    const { letter, hasRoundEnded, isChoiceCorrect, } = this.props;
+
+    if (hasRoundEnded() || this.state.clicked) return;
+
+    this.setState(toggleKey('clicked'));
+
+    const isCorrect = isChoiceCorrect(letterKeyPressed || letter.toLowerCase());
+
+    if (isCorrect)
+      this.setState(concatKey('classList', 'text-success'));
+    else
+      this.setState(concatKey('classList', 'text-danger'));
   }
 
   render() {
     const { letterClick, state: { classList, }, } = this;
     return (
-      <span 
-        className={classList.join(" ")} 
-        onClick={letterClick} 
+      <span
+        className={classList.join(" ")}
+        onClick={letterClick}
       >
-        {this.props.content}
+        {this.props.letter}
       </span>
     )
   }

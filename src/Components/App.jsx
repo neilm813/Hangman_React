@@ -3,7 +3,7 @@ import randomWords from 'random-words'; // https://www.npmjs.com/package/random-
 
 import Header from './Header'
 import LetterRow from './LetterRow';
-import { incrementKeyBy, copyObjPath, concatKey, } from '../helpers';
+import { incrementKeyBy, concatKey, } from '../helpers';
 
 // TODO: add keypress support
 class Scores {
@@ -25,8 +25,9 @@ class App extends Component {
       minWordLen: 4,
       maxWordLen: 20,
       challengeWord: '',
-      scores: new Scores(),
       letterIdxsToReveal: [],
+      scores: new Scores(),
+      letterKeyPressed: '',
       isRoundWon() { return this.challengeWord !== '' && this.letterIdxsToReveal.length === this.challengeWord.length; },
       isRoundLost() { return this.scores.attemptCount === this.scores.maxAttempts; },
       hasRoundEnded() { return this.isRoundWon() || this.isRoundLost(); },
@@ -48,7 +49,18 @@ class App extends Component {
     return { scores: scores, }
   }
 
-  componentDidMount() { this.setState({ challengeWord: this.getWord() }); }
+  handleKeyPress = e => {
+    this.setState({ letterKeyPressed: e.key });
+  }
+
+  componentDidMount() {
+    this.setState({ challengeWord: this.getWord() });
+    document.addEventListener("keypress", this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keypress", this.handleKeyPress);
+  }
 
   getWord() {
     let word = '';
@@ -84,9 +96,10 @@ class App extends Component {
 
   newRound = _ => {
     this.setState(prevState => {
-      return { 
-        challengeWord: this.getWord(), 
+      return {
+        challengeWord: this.getWord(),
         letterIdxsToReveal: [],
+        letterKeyPressed: '',
         scores: { ...prevState.scores, attemptCount: 0, }
       }
     });
@@ -94,7 +107,7 @@ class App extends Component {
 
   render() {
     const { newRound, isChoiceCorrect,
-      state: { isRoundWon, isRoundLost, hasRoundEnded, challengeWord, scores, letterIdxsToReveal, },
+      state: { isRoundWon, isRoundLost, hasRoundEnded, challengeWord, scores, letterIdxsToReveal, letterKeyPressed, },
     } = this;
 
     let btnNewWord;
@@ -117,7 +130,11 @@ class App extends Component {
           isRoundLost={isRoundLost.bind(this.state)}
         />
         <div className="container">
-          <LetterRow isChoiceCorrect={isChoiceCorrect} hasRoundEnded={hasRoundEnded.bind(this.state)} />
+          <LetterRow
+            isChoiceCorrect={isChoiceCorrect}
+            hasRoundEnded={hasRoundEnded.bind(this.state)}
+            letterKeyPressed={letterKeyPressed}
+          />
         </div>
         <div className="text-center mt-3">{btnNewWord}</div>
       </div>
