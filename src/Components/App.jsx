@@ -28,25 +28,7 @@ class App extends Component {
       letterIdxsToReveal: [],
       scores: new Scores(),
       letterKeyPressed: '',
-      isRoundWon() { return this.challengeWord !== '' && this.letterIdxsToReveal.length === this.challengeWord.length; },
-      isRoundLost() { return this.scores.attemptCount === this.scores.maxAttempts; },
-      hasRoundEnded() { return this.isRoundWon() || this.isRoundLost(); },
     }
-  }
-
-  static getDerivedStateFromProps(props, prevState) {
-
-    let hasEnded = prevState.hasRoundEnded();
-    let isWon = prevState.isRoundWon();
-    if (hasEnded === false) return null;
-    const scores = { ...prevState.scores };
-
-    if (isWon) {
-      scores.wins += 1;
-      scores.sessionWinStreak += 1;
-    } else scores.losses += 1;
-
-    return { scores: scores, }
   }
 
   handleKeyPress = e => {
@@ -69,6 +51,10 @@ class App extends Component {
     return word;
   }
 
+  isRoundWon = (state = this.state) => this.state.challengeWord !== '' && state.letterIdxsToReveal.length === this.state.challengeWord.length;
+  isRoundLost = (state = this.state) => state.scores.attemptCount === state.scores.maxAttempts;
+  hasRoundEnded = (state = this.state) => this.isRoundWon(state) || this.isRoundLost(state);
+
   isChoiceCorrect = (letter) => {
 
     const matchedIdxs = this.getMatchedIndexes(letter);
@@ -88,10 +74,19 @@ class App extends Component {
 
   processChoiceOutcome(matchedIdxs) {
 
-    if (matchedIdxs.length)
-      this.setState(concatKey('letterIdxsToReveal', matchedIdxs));
-    else
-      this.setState(incrementKeyBy('scores.attemptCount', 1));
+    this.setState(({ letterIdxsToReveal, scores, }) => {
+
+      const newState = {
+        letterIdxsToReveal: [...letterIdxsToReveal, ...matchedIdxs],
+        scores: { ...scores },
+      };
+
+      if (!matchedIdxs.length) newState.scores.attemptCount++;
+      if (this.isRoundWon(newState)) { newState.scores.sessionWinStreak++; newState.scores.wins++; }
+      else if (this.isRoundLost(newState)) newState.scores.losses++; newState.sessionWinStreak = 0;
+
+      return newState;
+    });
   }
 
   newRound = _ => {
@@ -106,8 +101,8 @@ class App extends Component {
   }
 
   render() {
-    const { newRound, isChoiceCorrect,
-      state: { isRoundWon, isRoundLost, hasRoundEnded, challengeWord, scores, letterIdxsToReveal, letterKeyPressed, },
+    const { newRound, isChoiceCorrect, isRoundWon, isRoundLost, hasRoundEnded,
+      state: { challengeWord, scores, letterIdxsToReveal, letterKeyPressed, },
     } = this;
 
     let btnNewWord;

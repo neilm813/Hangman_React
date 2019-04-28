@@ -23,14 +23,15 @@ export default class SelectableLetter extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    
     const { letterKeyPressed } = this.props;
     if (prevState.clicked) return;
 
     if (letterKeyPressed !== prevProps.letterKeyPressed && letterKeyPressed)
-      this.letterClick(null, letterKeyPressed);
+      this.letterChosen(null, letterKeyPressed);
   }
 
-  letterClick = (e, letterKeyPressed) => {
+  letterChosen = (e, letterKeyPressed) => {
 
     const { letter, hasRoundEnded, isChoiceCorrect, } = this.props;
 
@@ -47,11 +48,11 @@ export default class SelectableLetter extends Component {
   }
 
   render() {
-    const { letterClick, state: { classList, }, } = this;
+    const { letterChosen, state: { classList, }, } = this;
     return (
       <span
         className={classList.join(" ")}
-        onClick={letterClick}
+        onClick={letterChosen}
       >
         {this.props.letter}
       </span>
