@@ -3,7 +3,6 @@ import randomWords from 'random-words'; // https://www.npmjs.com/package/random-
 
 import Header from './Header'
 import LetterRow from './LetterRow';
-import { incrementKeyBy, concatKey, } from '../helpers';
 
 // TODO: add keypress support
 class Scores {
@@ -44,6 +43,10 @@ class App extends Component {
     document.removeEventListener("keypress", this.handleKeyPress);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isRoundOver()) document.getElementById("btnNewWord").focus();
+  }
+
   getWord() {
     let word = '';
     while (word.length < this.state.minWordLen || word.length > this.state.maxWordLen)
@@ -53,7 +56,7 @@ class App extends Component {
 
   isRoundWon = (state = this.state) => this.state.challengeWord !== '' && state.letterIdxsToReveal.length === this.state.challengeWord.length;
   isRoundLost = (state = this.state) => state.scores.attemptCount === state.scores.maxAttempts;
-  hasRoundEnded = (state = this.state) => this.isRoundWon(state) || this.isRoundLost(state);
+  isRoundOver = (state = this.state) => this.isRoundWon(state) || this.isRoundLost(state);
 
   isChoiceCorrect = (letter) => {
 
@@ -83,8 +86,7 @@ class App extends Component {
 
       if (!matchedIdxs.length) newState.scores.attemptCount++;
       if (this.isRoundWon(newState)) { newState.scores.sessionWinStreak++; newState.scores.wins++; }
-      else if (this.isRoundLost(newState)) newState.scores.losses++; newState.sessionWinStreak = 0;
-
+      else if (this.isRoundLost(newState)) { newState.scores.losses++; newState.scores.sessionWinStreak = 0; }
       return newState;
     });
   }
@@ -101,14 +103,15 @@ class App extends Component {
   }
 
   render() {
-    const { newRound, isChoiceCorrect, isRoundWon, isRoundLost, hasRoundEnded,
+    const { newRound, isChoiceCorrect, isRoundWon, isRoundLost, isRoundOver,
       state: { challengeWord, scores, letterIdxsToReveal, letterKeyPressed, },
     } = this;
 
     let btnNewWord;
-    if (hasRoundEnded.bind(this.state).call())
+    if (isRoundOver())
       btnNewWord =
         <button
+          id="btnNewWord"
           onClick={newRound}
           type="button"
           className="btn btn-outline-light">
@@ -121,17 +124,19 @@ class App extends Component {
           word={challengeWord}
           scores={scores}
           letterIdxsToReveal={letterIdxsToReveal}
-          isRoundWon={isRoundWon.bind(this.state)}
-          isRoundLost={isRoundLost.bind(this.state)}
+          isRoundWon={isRoundWon}
+          isRoundLost={isRoundLost}
         />
         <div className="container">
           <LetterRow
             isChoiceCorrect={isChoiceCorrect}
-            hasRoundEnded={hasRoundEnded.bind(this.state)}
+            isRoundOver={isRoundOver}
             letterKeyPressed={letterKeyPressed}
           />
         </div>
-        <div className="text-center mt-3">{btnNewWord}</div>
+        <div className="text-center mt-3">
+          {btnNewWord}
+        </div>
       </div>
     );
   }

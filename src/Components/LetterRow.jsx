@@ -18,7 +18,7 @@ export default class LetterRow extends Component {
     return Math.ceil(letters.length / this.state.maxLettersPerRow);
   }
 
-  buildRows({ isChoiceCorrect, hasRoundEnded, letterKeyPressed }) {
+  buildRows({ isChoiceCorrect, isRoundOver, letterKeyPressed }) {
     const rows = [];
     const lettersCopy = [...letters];
     rows.push(
@@ -32,7 +32,7 @@ export default class LetterRow extends Component {
                   key={letter}
                   letter={letter}
                   isChoiceCorrect={isChoiceCorrect}
-                  hasRoundEnded={hasRoundEnded}
+                  isRoundOver={isRoundOver}
                   letterKeyPressed={letter.toLowerCase() === letterKeyPressed ? letterKeyPressed : ''}
                 />
               ))

@@ -13,7 +13,7 @@ export default class SelectableLetter extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
 
-    if (nextProps.hasRoundEnded() && prevState.clicked) {
+    if (nextProps.isRoundOver() && prevState.clicked) {
       return {
         classList: ['selectable-letter'],
         clicked: false,
@@ -33,9 +33,9 @@ export default class SelectableLetter extends Component {
 
   letterChosen = (e, letterKeyPressed) => {
 
-    const { letter, hasRoundEnded, isChoiceCorrect, } = this.props;
+    const { letter, isRoundOver, isChoiceCorrect, } = this.props;
 
-    if (hasRoundEnded() || this.state.clicked) return;
+    if (isRoundOver() || this.state.clicked) return;
 
     this.setState(toggleKey('clicked'));
 
